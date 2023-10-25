@@ -128,7 +128,7 @@ def Ranking(ThresholdLong,ThresholdShort,Investment,Year):
                     break
                
                 if(DiffSort[j] == Diff[Year][i] and DiffSort[j] < 0):
-                    SumLong += InvPerLong * ( 1 + float(ForwardRate[Year][i]) / float(SpotRate[Year+1][i]) - 1)
+                    SumLong += InvPerLong * ( 1 + float(ForwardRate[Year][i]) / float(SpotRate[Year + 1][i]) - 1)
 
         SumShort = 0
         cntShort = 0
@@ -155,9 +155,9 @@ def Ranking(ThresholdLong,ThresholdShort,Investment,Year):
                     break
                 
                 if(DiffSort[j] == Diff[Year][i] and DiffSort[j] > 0):
-                    SumShort += InvPerShort * ( 1 + float(SpotRate[Year+1][i]) / float(ForwardRate[Year][i]) - 1 )    
+                    SumShort += InvPerShort * ( 1 + float(SpotRate[Year + 1][i]) / float(ForwardRate[Year][i]) - 1 )    
 
-        return Ranking(ThresholdLong,ThresholdShort,SumShort+SumLong,Year+1)
+        return Ranking(ThresholdLong,ThresholdShort,SumShort+SumLong,Year + 1)
 
 def Plot(A,B,C):
     # Creating dataset
