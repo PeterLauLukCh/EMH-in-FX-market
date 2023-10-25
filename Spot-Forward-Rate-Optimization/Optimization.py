@@ -56,17 +56,42 @@ def ReadIn():
 
 def StoreData(List,Data,Cnt):
     Data[Cnt-1] = List
+    
 
+"""
+Parameters:
+    Spot, 1D array that stores the spot rate of 17 currencies
+    Forward, 1D array that stores the forward rate of 17 currencies
+
+Return:
+    Stores the difference between spot rate and forward rate of a
+    specific currency
+"""
 def CalcDiff(Spot,Forward):
     for i in range(17):
         for j in range(n):
             if(ForwardRate[i][j]!=''):
                 Diff[i][j] = (float(SpotRate[i][j])/float(ForwardRate[i][j])) - 1
-        
+
+"""
+Tailed Recursion
+
+Parameters:
+    ThresholdLong, the threshold for longing currency
+    ThresholdShort, the threshold for shorting currency
+    Investment, total number of money for investment
+    Year, stores the information of time
+    
+Return:
+    Investment, money left for investment
+    Year, the information of time
+"""      
 def Ranking(ThresholdLong,ThresholdShort,Investment,Year):
-    if(Year==16):
+    #16's year is the last year
+    if(Year == 16):
         return Investment
     else:
+        #Ranked the difference between spot rate and forward
         DiffSort = [0 for i in range(0,n)]
         
         for i in range(n):
@@ -74,53 +99,63 @@ def Ranking(ThresholdLong,ThresholdShort,Investment,Year):
             
         DiffSort.sort()
         SumLong = 0
+        #We spend half on Long and half on short
         InvestShort = Investment / 2
         InvestLong = InvestShort
+        #cntLong stores how many currency we are planning to long
         cntLong = 0
         
         for i in range(n):
             for j in range(ThresholdLong):
-                if(DiffSort[j]>0):
+                if(DiffSort[j] > 0):
                     break
-                
-                if(DiffSort[j]==Diff[Year][i] and DiffSort[j]<0):
+                #To maximize our profit, we want the case that difference
+                #between spot rate and forward rate to be more negative
+                if(DiffSort[j] == Diff[Year][i] and DiffSort[j] < 0):
                     cntLong += 1
                     
-        if(cntLong==0):
-            cntLong=1
+        #Avoid division by zero          
+        if(cntLong == 0):
+            cntLong = 1
             
+        #Calculate the amount of money we should investment on each Long currency
         InvPerLong = InvestLong / cntLong
-        
+
+        #Calculate the profit we gain from Long currency
         for i in range(n):
             for j in range(ThresholdLong):
                 if(DiffSort[j]>0):
                     break
-                
-                if(DiffSort[j]==Diff[Year][i] and DiffSort[j]<0):
-                    SumLong += InvPerLong*(1+float(ForwardRate[Year][i])/float(SpotRate[Year+1][i])-1)
+               
+                if(DiffSort[j] == Diff[Year][i] and DiffSort[j] < 0):
+                    SumLong += InvPerLong * ( 1 + float(ForwardRate[Year][i]) / float(SpotRate[Year+1][i]) - 1)
 
         SumShort = 0
         cntShort = 0
         
+        #Do the same process for Short currency
         for i in range(n):
             for j in range(n-1,n-1-ThresholdShort,-1):
-                if(DiffSort[j]<0):
+                if(DiffSort[j] < 0):
                     break
                 
-                if(DiffSort[j]==Diff[Year][i] and DiffSort[j]>0):
+                #To maximize our profit, we want the case that difference
+                #between spot rate and forward rate to be more positive
+                if(DiffSort[j] == Diff[Year][i] and DiffSort[j] > 0):
                     cntShort += 1
                     
-        if(cntShort==0):
-            cntShort=1
-        
+        if(cntShort == 0):
+            cntShort = 1
+            
+        #Calculate the profit we gain from Short currency
         InvPerShort = InvestShort / cntShort
         for i in range(n):
             for j in range(n-1,n-1-ThresholdShort,-1):
-                if(DiffSort[j]<0):
+                if(DiffSort[j] < 0):
                     break
                 
-                if(DiffSort[j]==Diff[Year][i] and DiffSort[j]>0):
-                    SumShort += InvPerShort*(1+float(SpotRate[Year+1][i])/float(ForwardRate[Year][i])-1)    
+                if(DiffSort[j] == Diff[Year][i] and DiffSort[j] > 0):
+                    SumShort += InvPerShort * ( 1 + float(SpotRate[Year+1][i]) / float(ForwardRate[Year][i]) - 1 )    
 
         return Ranking(ThresholdLong,ThresholdShort,SumShort+SumLong,Year+1)
 
@@ -140,6 +175,9 @@ def Plot(A,B,C):
     plt.show()
     
 def Optimization():
+    #A stores information of Long
+    #B stores information of short
+    #C stores information of overall profit
     A = []
     B = []
     C = []
@@ -155,9 +193,9 @@ def Optimization():
             B.append(j)
             C.append(Gain)
 
-            if(Gain>Max_Return):
-                LongT=i
-                ShortT=j
+            if(Gain > Max_Return):
+                LongT = i
+                ShortT = j
                 Max_Return = Gain
                 
     print(LongT,ShortT,Max_Return)
@@ -167,9 +205,3 @@ def Optimization():
 ReadIn()
 CalcDiff(SpotRate,ForwardRate)
 Optimization()
-
-
-
-
-
-
